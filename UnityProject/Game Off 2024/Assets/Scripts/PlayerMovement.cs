@@ -19,6 +19,11 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
     private Vector2 moveInput;
     private Vector3 moveDirection;
     
+    // Animation parameter IDs
+    private readonly int MoveXHash = Animator.StringToHash("MoveX");
+    private readonly int MoveZHash = Animator.StringToHash("MoveZ");
+    private readonly int IsMovingHash = Animator.StringToHash("IsMoving");
+    
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -80,16 +85,43 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
         float moveZ = localMovement.z;
         
         // Smoothly interpolate current animation values to target values
-        float currentMoveX = animator.GetFloat("MoveX");
-        float currentMoveZ = animator.GetFloat("MoveZ");
+        float currentMoveX = animator.GetFloat(MoveXHash);
+        float currentMoveZ = animator.GetFloat(MoveZHash);
         
-        animator.SetFloat("MoveX", Mathf.Lerp(currentMoveX, moveX, Time.deltaTime * animationBlendSpeed));
-        animator.SetFloat("MoveZ", Mathf.Lerp(currentMoveZ, moveZ, Time.deltaTime * animationBlendSpeed));
+        animator.SetFloat(MoveXHash, Mathf.Lerp(currentMoveX, moveX, Time.deltaTime * animationBlendSpeed));
+        animator.SetFloat(MoveZHash, Mathf.Lerp(currentMoveZ, moveZ, Time.deltaTime * animationBlendSpeed));
         
-        // Set IsMoving parameter based on raw input magnitude
+        // Set IsMoving parameter based on raw input magnitude instead of moveDirection
         bool isMoving = moveInput.magnitude > minimumMoveThreshold;
-        Debug.Log($"Move Input Magnitude: {moveInput.magnitude}, IsMoving: {isMoving}");
         
-        animator.SetBool("IsMoving", isMoving);
+        // Add debug logging
+        Debug.Log($"Move Input Magnitude: {moveInput.magnitude}, IsMoving: {isMoving}, Threshold: {minimumMoveThreshold}");
+        
+        animator.SetBool(IsMovingHash, isMoving);
+    }
+
+    private void ValidateAnimatorParameters()
+    {
+        bool foundMoveX = false;
+        bool foundMoveZ = false;
+        bool foundIsMoving = false;
+        
+        // Log all parameters and check if ours exist
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            Debug.Log($"Found parameter: {param.name}, type: {param.type}");
+            
+            if (param.nameHash == MoveXHash) foundMoveX = true;
+            if (param.nameHash == MoveZHash) foundMoveZ = true;
+            if (param.nameHash == IsMovingHash) foundIsMoving = true;
+        }
+        
+        // Report any missing parameters
+        if (!foundMoveX)
+            Debug.LogError("MoveX parameter not found in Animator!");
+        if (!foundMoveZ)
+            Debug.LogError("MoveZ parameter not found in Animator!");
+        if (!foundIsMoving)
+            Debug.LogError("IsMoving parameter not found in Animator!");
     }
 } 

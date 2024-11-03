@@ -20,7 +20,6 @@ public class PlayerCamera : MonoBehaviour, PlayerControls.IPlayerActions
     
     private void Awake()
     {
-        Debug.Log("PlayerCamera Awake");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -31,7 +30,6 @@ public class PlayerCamera : MonoBehaviour, PlayerControls.IPlayerActions
     private void OnEnable()
     {
         controls.Player.Enable();
-        Debug.Log("Camera controls enabled");
     }
 
     private void OnDisable()
@@ -47,15 +45,12 @@ public class PlayerCamera : MonoBehaviour, PlayerControls.IPlayerActions
     public void OnLook(InputAction.CallbackContext context)
     {
         lookInput = context.ReadValue<Vector2>();
-        Debug.Log($"Look Input: {lookInput}");
     }
 
     private void LateUpdate()
     {
         if (lookInput != Vector2.zero)
         {
-            Debug.Log($"Applying rotation - X: {lookInput.x}, Y: {lookInput.y}");
-            
             // Handle horizontal rotation (player rotation)
             float horizontalRotation = lookInput.x * mouseSensitivityX;
             transform.Rotate(Vector3.up, horizontalRotation);

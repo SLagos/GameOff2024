@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
     [SerializeField] private float minimumMoveThreshold = 0.1f;
     
     [Header("References")]
-    [SerializeField] private Animator animator;  // Reference to child's Animator
+    [SerializeField] private Animator animator;
     
     private CharacterController controller;
     private PlayerControls controls;
@@ -28,7 +28,6 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
     {
         controller = GetComponent<CharacterController>();
         
-        // Validate animator reference
         if (animator == null)
         {
             Debug.LogError("Animator reference not set on PlayerMovement!");
@@ -36,6 +35,9 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
         
         controls = new PlayerControls();
         controls.Player.SetCallbacks(this);
+        
+        // Uncomment for debugging animation parameters
+        // ValidateAnimatorParameters();
     }
 
     private void OnEnable()
@@ -69,18 +71,14 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
         moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
         moveDirection = transform.TransformDirection(moveDirection);
         
-        // Add gravity
         moveDirection.y += Physics.gravity.y;
-        
         controller.Move(moveDirection * (moveSpeed * Time.deltaTime));
     }
 
     private void UpdateAnimations()
     {
-        // Convert world space movement to local space for animations
         Vector3 localMovement = transform.InverseTransformDirection(moveDirection);
         
-        // Update animation parameters
         float moveX = localMovement.x;
         float moveZ = localMovement.z;
         
@@ -93,13 +91,10 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
         
         // Set IsMoving parameter based on raw input magnitude instead of moveDirection
         bool isMoving = moveInput.magnitude > minimumMoveThreshold;
-        
-        // Add debug logging
-        Debug.Log($"Move Input Magnitude: {moveInput.magnitude}, IsMoving: {isMoving}, Threshold: {minimumMoveThreshold}");
-        
         animator.SetBool(IsMovingHash, isMoving);
     }
 
+    // Kept for future debugging if needed
     private void ValidateAnimatorParameters()
     {
         bool foundMoveX = false;

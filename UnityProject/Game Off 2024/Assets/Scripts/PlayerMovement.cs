@@ -7,6 +7,13 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
     
+    [Header("Animation Settings")]
+    [SerializeField] private float animationBlendSpeed = 10f;
+    [SerializeField] private float minimumMoveThreshold = 0.1f;
+    
+    [Header("References")]
+    [SerializeField] private Animator animator;  // Reference to child's Animator
+    
     private CharacterController controller;
     private PlayerControls controls;
     private Vector2 moveInput;
@@ -14,18 +21,21 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
     
     private void Awake()
     {
-        Debug.Log("PlayerMovement Awake");
         controller = GetComponent<CharacterController>();
+        
+        // Validate animator reference
+        if (animator == null)
+        {
+            Debug.LogError("Animator reference not set on PlayerMovement!");
+        }
         
         controls = new PlayerControls();
         controls.Player.SetCallbacks(this);
-        Debug.Log("Controls initialized and callbacks set");
     }
 
     private void OnEnable()
     {
         controls.Player.Enable();
-        Debug.Log("Controls enabled");
     }
 
     private void OnDisable()
@@ -33,25 +43,24 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
         controls.Player.Disable();
     }
 
-    // Implement the interface methods
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
-        Debug.Log($"OnMove called: {moveInput}, Phase: {context.phase}");
     }
 
     public void OnLook(InputAction.CallbackContext context)
     {
-        // Implement if needed
+        // Implementation required by interface
     }
 
     private void Update()
     {
-        if (moveInput != Vector2.zero)
-        {
-            Debug.Log($"Applying movement: {moveInput}");
-        }
-        
+        HandleMovement();
+        UpdateAnimations();
+    }
+
+    private void HandleMovement()
+    {
         moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
         moveDirection = transform.TransformDirection(moveDirection);
         
@@ -59,5 +68,28 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
         moveDirection.y += Physics.gravity.y;
         
         controller.Move(moveDirection * (moveSpeed * Time.deltaTime));
+    }
+
+    private void UpdateAnimations()
+    {
+        // Convert world space movement to local space for animations
+        Vector3 localMovement = transform.InverseTransformDirection(moveDirection);
+        
+        // Update animation parameters
+        float moveX = localMovement.x;
+        float moveZ = localMovement.z;
+        
+        // Smoothly interpolate current animation values to target values
+        float currentMoveX = animator.GetFloat("MoveX");
+        float currentMoveZ = animator.GetFloat("MoveZ");
+        
+        animator.SetFloat("MoveX", Mathf.Lerp(currentMoveX, moveX, Time.deltaTime * animationBlendSpeed));
+        animator.SetFloat("MoveZ", Mathf.Lerp(currentMoveZ, moveZ, Time.deltaTime * animationBlendSpeed));
+        
+        // Set IsMoving parameter based on raw input magnitude
+        bool isMoving = moveInput.magnitude > minimumMoveThreshold;
+        Debug.Log($"Move Input Magnitude: {moveInput.magnitude}, IsMoving: {isMoving}");
+        
+        animator.SetBool("IsMoving", isMoving);
     }
 } 

@@ -15,9 +15,12 @@ using UnityEngine.UI;
 
 public class RelayManager : MonoSingleton<RelayManager>
 {
-    [SerializeField] private Button hostBtn, joinBtn;
-    [SerializeField] private TMP_InputField joinInput;
-    [SerializeField] private TMP_Text codeText;
+    // [SerializeField] private Button hostBtn, joinBtn;
+    // [SerializeField] private TMP_InputField joinInput;
+    // [SerializeField] private TMP_Text codeText;
+
+    public Action OnRelayJoined;
+    public Action OnRelayCreated;
 
     public async void JoinRelay(string joinCode)
     {
@@ -26,11 +29,10 @@ public class RelayManager : MonoSingleton<RelayManager>
 
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
-        codeText.text = $"Code: {joinCode}";
+        //codeText.text = $"Code: {joinCode}";
         
         NetworkManager.Singleton.StartClient();
         UIManager.Instance.HideMainMenu();
-
         
     }
 
@@ -41,7 +43,7 @@ public class RelayManager : MonoSingleton<RelayManager>
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(4);
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
-            codeText.text = $"Code: {joinCode}";
+            //codeText.text = $"Code: {joinCode}";
             RelayServerData relayServerData = allocation.ToRelayServerData("dtls");
 
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);

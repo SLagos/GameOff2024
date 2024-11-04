@@ -13,7 +13,8 @@ public class LoginState : AppState
     {
         //AuthenticationService.Instance.SignedIn += OnSignedIn;
         _transitions = new List<AppStateTransition>
-        {new AppStateTransition(EAppStateId.LookingForLobby, IsSignedIn )};
+        {new AppStateTransition(EAppStateId.MainMenu, IsSignedIn )};
+        OnLogIn("TestUser");
     }
 
     private bool IsSignedIn()
@@ -32,12 +33,13 @@ public class LoginState : AppState
 
     private async void OnLogIn(string userName)
     {
-        AuthenticationService.Instance.SwitchProfile(userName);
+        //AuthenticationService.Instance.SwitchProfile(userName);
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
     }
 
     private void OnSignedIn()
     {
-       
+
     }
 }

@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using Unity.Netcode;
 
-public class PlayerCamera : MonoBehaviour, PlayerControls.IPlayerActions
+public class PlayerCamera : NetworkBehaviour, PlayerControls.IPlayerActions
 {
     [Header("Camera Settings")]
     [SerializeField] private float mouseSensitivityX = 2f;
@@ -19,7 +20,7 @@ public class PlayerCamera : MonoBehaviour, PlayerControls.IPlayerActions
     private float cameraPitch;
     
     private void Awake()
-    {
+    {        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -34,6 +35,7 @@ public class PlayerCamera : MonoBehaviour, PlayerControls.IPlayerActions
 
     private void OnDisable()
     {
+
         controls.Player.Disable();
     }
 
@@ -43,12 +45,17 @@ public class PlayerCamera : MonoBehaviour, PlayerControls.IPlayerActions
     }
 
     public void OnLook(InputAction.CallbackContext context)
-    {
+    {        
         lookInput = context.ReadValue<Vector2>();
     }
 
     private void LateUpdate()
     {
+        if(!IsLocalPlayer)
+        {
+            virtualCamera.gameObject.SetActive(false);
+            return;
+        } 
         if (lookInput != Vector2.zero)
         {
             // Handle horizontal rotation (player rotation)
@@ -66,6 +73,7 @@ public class PlayerCamera : MonoBehaviour, PlayerControls.IPlayerActions
 
     private void OnApplicationFocus(bool hasFocus)
     {
+        if(!IsLocalPlayer) return;
         if (hasFocus)
         {
             Cursor.lockState = CursorLockMode.Locked;

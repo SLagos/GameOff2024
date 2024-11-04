@@ -1,8 +1,9 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
+public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 {
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
@@ -52,6 +53,7 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if(!IsLocalPlayer) return;
         moveInput = context.ReadValue<Vector2>();
     }
 
@@ -62,6 +64,7 @@ public class PlayerMovement : MonoBehaviour, PlayerControls.IPlayerActions
 
     private void Update()
     {
+        if(!IsLocalPlayer) return;
         HandleMovement();
         UpdateAnimations();
     }

@@ -28,30 +28,22 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     private float hearthbeatInterval = 5f;
     private Coroutine heartbeatCoroutine;
 
-    protected override async void Start()
+    public bool IsInLobby { get; private set; }
+
+    protected override void Start()
     {
-        try
-        {
-            AuthenticationService.Instance.SignedIn += () =>
-            {
-                createLobbyBtn.interactable = true;
-                refreshButton.interactable = true;
-            };
-            createLobbyBtn.interactable = false;
-            refreshButton.interactable = false;
+        AuthenticationService.Instance.SignedIn += () =>
+             {
+                 createLobbyBtn.interactable = true;
+                 refreshButton.interactable = true;
+             };
+        createLobbyBtn.interactable = false;
+        refreshButton.interactable = false;
 
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-
-            createLobbyBtn.onClick.AddListener(CreateLobby);
-            refreshButton.onClick.AddListener(ListLobbies);
-            backButton.onClick.AddListener(BackToLobbies);
-            startGame.onClick.AddListener(StartGame);
-        }
-
-        catch (LobbyServiceException e)
-        {
-            Debug.Log(e);
-        }
+        createLobbyBtn.onClick.AddListener(CreateLobby);
+        refreshButton.onClick.AddListener(ListLobbies);
+        backButton.onClick.AddListener(BackToLobbies);
+        startGame.onClick.AddListener(StartGame);
     }
 
     private async void StartGame()
@@ -97,6 +89,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
                 joinedLobby = null;
                 UIManager.Instance.GotoLobbiesView();
             }
+            IsInLobby = false;
         }
 
         catch (LobbyServiceException e)
@@ -129,6 +122,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             heartbeatCoroutine = StartCoroutine(HeartbeatLobby());
             //Go to lobby view
             GoToLobby(lobby);
+
         }
 
         catch (LobbyServiceException e)
@@ -151,6 +145,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
 
             UpdatePlayersView();
             startGame.gameObject.SetActive(lobby.HostId == AuthenticationService.Instance.PlayerId);
+            IsInLobby = true;
 
         }
         catch (LobbyServiceException e)
@@ -193,7 +188,8 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         }
         foreach (var player in joinedLobby.Players)
         {
-            Instantiate(playerElementPrefab, playerContainer).SetPlayerData(player.Id);
+            string playerId = player.Profile != null ? player.Profile.Name : player.Id;
+            Instantiate(playerElementPrefab, playerContainer).SetPlayerData(playerId);
         }
     }
 

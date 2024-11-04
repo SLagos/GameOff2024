@@ -12,6 +12,8 @@ public class UIManager : MonoSingleton<UIManager>
     public void ShowMainMenu()
     {
         _mainMenuScreen.SetActive(true);
+        _lobbyScreen.SetActive(false);
+        _lobbiesScreen.SetActive(false);
     }
 
     public void HideMainMenu()
@@ -23,12 +25,14 @@ public class UIManager : MonoSingleton<UIManager>
 
     public void GoToLobbyView()
     {
+        HideMainMenu();
         _lobbyScreen.SetActive(true);
         _lobbiesScreen.SetActive(false);
     }
 
     public void GotoLobbiesView()
     {
+        HideMainMenu();
         _lobbyScreen.SetActive(false);
         _lobbiesScreen.SetActive(true);
     }

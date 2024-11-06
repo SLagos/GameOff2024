@@ -212,7 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3607980332
+  GlobalObjectIdHash: 374807421
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -332,8 +332,8 @@ MonoBehaviour:
   availableShapes:
   - id: Chest
     visualPrefab: {fileID: 2377840826715166119, guid: 7d0f7c7c3b2efe3458de1517715a708a, type: 3}
-    speed: 8
-  - id: Chest
+    speed: 5
+  - id: Chair
     visualPrefab: {fileID: 2377840826715166119, guid: 68b12485f2c60a64db7da06d40c0a4c9, type: 3}
     speed: 8
   visualParent: {fileID: 8085266274917424909}

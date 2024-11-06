@@ -87,6 +87,7 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         currentShapeInstance.transform.localRotation = Quaternion.identity;
 
         // Update movement speed
+        Debug.Log($"Updating speed to: {currentShape.speed}");
         playerMovement.MoveSpeed = currentShape.speed;
     }
 } 

@@ -79,12 +79,21 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
         moveDirection = transform.TransformDirection(moveDirection);
         
+        // Normalize the movement direction to ensure consistent speed
+        if (moveDirection.magnitude > 0)
+        {
+            moveDirection.Normalize();
+        }
+        
         moveDirection.y += Physics.gravity.y;
-        controller.Move(moveDirection * (moveSpeed * Time.deltaTime));
+        controller.Move(moveDirection * (MoveSpeed * Time.deltaTime));
     }
 
     private void UpdateAnimations()
     {
+        // Early return if no animator is assigned
+        if (animator == null) return;
+
         Vector3 localMovement = transform.InverseTransformDirection(moveDirection);
         
         float moveX = localMovement.x;
@@ -105,6 +114,8 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     // Kept for future debugging if needed
     private void ValidateAnimatorParameters()
     {
+        if (animator == null) return;
+        
         bool foundMoveX = false;
         bool foundMoveZ = false;
         bool foundIsMoving = false;

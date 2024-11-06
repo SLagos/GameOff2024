@@ -51,7 +51,7 @@ public class PlayerCamera : NetworkBehaviour, PlayerControls.IPlayerActions
 
     private void LateUpdate()
     {
-        if(!IsLocalPlayer)
+        if(!IsOwner && virtualCamera.gameObject.activeSelf)
         {
             virtualCamera.gameObject.SetActive(false);
             return;
@@ -73,7 +73,7 @@ public class PlayerCamera : NetworkBehaviour, PlayerControls.IPlayerActions
 
     private void OnApplicationFocus(bool hasFocus)
     {
-        if(!IsLocalPlayer) return;
+        if(!IsOwner) return;
         if (hasFocus)
         {
             Cursor.lockState = CursorLockMode.Locked;

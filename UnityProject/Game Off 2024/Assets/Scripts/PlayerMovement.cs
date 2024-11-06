@@ -53,7 +53,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if(!IsLocalPlayer) return;
+        if(!IsOwner) return;
         moveInput = context.ReadValue<Vector2>();
     }
 
@@ -64,7 +64,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 
     private void Update()
     {
-        if(!IsLocalPlayer) return;
+        if(!IsOwner) return;
         HandleMovement();
         UpdateAnimations();
     }

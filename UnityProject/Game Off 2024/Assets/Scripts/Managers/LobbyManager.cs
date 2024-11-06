@@ -163,6 +163,8 @@ public class LobbyManager : MonoSingleton<LobbyManager>
 
     private void OnDataChanged(Dictionary<string, ChangedOrRemovedLobbyValue<DataObject>> dictionary)
     {
+        //Do not run this code if I am the Hosting the lobby
+        if (joinedLobby.HostId == AuthenticationService.Instance.PlayerId) return;
         string relayCode = dictionary["RelayCode"].Value.Value;
         if (relayCode != null)
         {

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 638b273c6c3368944aa5e749b9540cdd, type: 3}
+  m_Name: MimicLibrary
+  m_EditorClassIdentifier: 
+  mimics:
+  - id: Chest
+    visualPrefab: {fileID: 2377840826715166119, guid: 7d0f7c7c3b2efe3458de1517715a708a, type: 3}
+    speed: 8
+  - id: Chair
+    visualPrefab: {fileID: 2377840826715166119, guid: 68b12485f2c60a64db7da06d40c0a4c9, type: 3}
+    speed: 5
+  - id: Shelf
+    visualPrefab: {fileID: 2377840826715166119, guid: b5184c8c447b25c48b728e616f84027e, type: 3}
+    speed: 3

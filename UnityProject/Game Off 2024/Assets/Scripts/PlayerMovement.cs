@@ -7,6 +7,11 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 {
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
+    public float MoveSpeed
+    {
+        get => moveSpeed;
+    set => moveSpeed = value;
+    }
     
     [Header("Animation Settings")]
     [SerializeField] private float animationBlendSpeed = 10f;

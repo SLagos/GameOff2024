@@ -191,6 +191,34 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""PlayerMimic"",
+            ""id"": ""bb3df569-546d-4f97-8640-e93f627bb2dd"",
+            ""actions"": [
+                {
+                    ""name"": ""Shapeshift"",
+                    ""type"": ""Button"",
+                    ""id"": ""a4500b8f-4f70-4715-849d-a55121500dec"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""76580212-4e9c-486d-a7fe-68f8daf5baca"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shapeshift"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -199,11 +227,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
+        // PlayerMimic
+        m_PlayerMimic = asset.FindActionMap("PlayerMimic", throwIfNotFound: true);
+        m_PlayerMimic_Shapeshift = m_PlayerMimic.FindAction("Shapeshift", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerControls.Player.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_PlayerMimic.enabled, "This will cause a leak and performance issues, PlayerControls.PlayerMimic.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -315,9 +347,59 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // PlayerMimic
+    private readonly InputActionMap m_PlayerMimic;
+    private List<IPlayerMimicActions> m_PlayerMimicActionsCallbackInterfaces = new List<IPlayerMimicActions>();
+    private readonly InputAction m_PlayerMimic_Shapeshift;
+    public struct PlayerMimicActions
+    {
+        private @PlayerControls m_Wrapper;
+        public PlayerMimicActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Shapeshift => m_Wrapper.m_PlayerMimic_Shapeshift;
+        public InputActionMap Get() { return m_Wrapper.m_PlayerMimic; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(PlayerMimicActions set) { return set.Get(); }
+        public void AddCallbacks(IPlayerMimicActions instance)
+        {
+            if (instance == null || m_Wrapper.m_PlayerMimicActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PlayerMimicActionsCallbackInterfaces.Add(instance);
+            @Shapeshift.started += instance.OnShapeshift;
+            @Shapeshift.performed += instance.OnShapeshift;
+            @Shapeshift.canceled += instance.OnShapeshift;
+        }
+
+        private void UnregisterCallbacks(IPlayerMimicActions instance)
+        {
+            @Shapeshift.started -= instance.OnShapeshift;
+            @Shapeshift.performed -= instance.OnShapeshift;
+            @Shapeshift.canceled -= instance.OnShapeshift;
+        }
+
+        public void RemoveCallbacks(IPlayerMimicActions instance)
+        {
+            if (m_Wrapper.m_PlayerMimicActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IPlayerMimicActions instance)
+        {
+            foreach (var item in m_Wrapper.m_PlayerMimicActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_PlayerMimicActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public PlayerMimicActions @PlayerMimic => new PlayerMimicActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+    }
+    public interface IPlayerMimicActions
+    {
+        void OnShapeshift(InputAction.CallbackContext context);
     }
 }

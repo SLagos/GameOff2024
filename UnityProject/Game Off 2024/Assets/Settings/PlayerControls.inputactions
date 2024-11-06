@@ -169,6 +169,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "PlayerMimic",
+            "id": "bb3df569-546d-4f97-8640-e93f627bb2dd",
+            "actions": [
+                {
+                    "name": "Shapeshift",
+                    "type": "Button",
+                    "id": "a4500b8f-4f70-4715-849d-a55121500dec",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "76580212-4e9c-486d-a7fe-68f8daf5baca",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shapeshift",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

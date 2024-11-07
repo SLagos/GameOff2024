@@ -2,12 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
 {
     [Header("Shape Settings")]
-    [SerializeField] private MimicData currentShape;
-    [SerializeField] private List<MimicData> availableShapes = new List<MimicData>();
+    [SerializeField] private MimicLibrary mimicLibrary;
+    [SerializeField] private List<MimicsList> availableShapes = new List<MimicsList>();
+    private MimicData currentShape;
     
     [Header("References")]
     [SerializeField] private Transform visualParent;
@@ -23,6 +25,11 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         if (playerMovement == null)
         {
             Debug.LogError("PlayerMovement component not found on Shapeshifter GameObject!");
+        }
+
+        if (mimicLibrary == null)
+        {
+            Debug.LogError("MimicLibrary reference not set on Shapeshifter!");
         }
 
         controls = new PlayerControls();
@@ -43,12 +50,27 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
     {
         if (!IsOwner) return;
         
-        if (currentShape == null && availableShapes.Count > 0)
+        if (availableShapes.Count > 0)
         {
-            currentShape = availableShapes[0];
+            currentShape = GetMimicDataFromEnum(availableShapes[0]);
         }
         
         ApplyCurrentShape();
+    }
+
+    private MimicData GetMimicDataFromEnum(MimicsList mimicType)
+    {
+        if (mimicType == MimicsList.None) return null;
+        
+        string mimicId = mimicType.ToString();
+        MimicData mimicData = mimicLibrary.mimics.FirstOrDefault(m => m.id == mimicId);
+        
+        if (mimicData == null)
+        {
+            Debug.LogError($"No MimicData found for ID: {mimicId}");
+        }
+        
+        return mimicData;
     }
 
     public void OnShapeshift(InputAction.CallbackContext context)
@@ -66,7 +88,7 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         if (availableShapes.Count == 0) return;
 
         currentShapeIndex = (currentShapeIndex + 1) % availableShapes.Count;
-        currentShape = availableShapes[currentShapeIndex];
+        currentShape = GetMimicDataFromEnum(availableShapes[currentShapeIndex]);
         
         ApplyCurrentShape();
     }

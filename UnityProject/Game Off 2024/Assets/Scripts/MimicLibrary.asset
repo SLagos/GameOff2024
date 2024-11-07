@@ -19,6 +19,3 @@ MonoBehaviour:
   - id: Chair
     visualPrefab: {fileID: 2377840826715166119, guid: 68b12485f2c60a64db7da06d40c0a4c9, type: 3}
     speed: 5
-  - id: Shelf
-    visualPrefab: {fileID: 2377840826715166119, guid: b5184c8c447b25c48b728e616f84027e, type: 3}
-    speed: 3

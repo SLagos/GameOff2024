@@ -10,20 +10,20 @@ public abstract class AppState : ScriptableObject
 
     protected List<AppStateTransition> _transitions = new List<AppStateTransition>();
 
-    public virtual void Enter()
+    public void Enter()
     {
         OnEnter();
         IsInitialized = true;
     }
 
-    public virtual void Exit()
+    public void Exit()
     {
         IsExiting = true;
         OnExit();
         IsExiting = false;
     }
 
-    public virtual void Update()
+    public void Update()
     {
         OnUpdate();
         foreach (var transition in _transitions)
@@ -35,10 +35,10 @@ public abstract class AppState : ScriptableObject
             }
         }
     }
-    public abstract void OnEnter();
-    public abstract void OnExit();
+    public virtual void OnEnter(){}
+    public virtual void OnExit(){}
 
-    public abstract void OnUpdate();
+    public virtual void OnUpdate(){}
 }
 
 public class AppStateTransition

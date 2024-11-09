@@ -30,6 +30,7 @@ public class InitState : AppState
             };
             UnityServices.InitializeFailed += (e) => { Debug.Log(e); };
             await UnityServices.InitializeAsync();
+            NetworkEventDispatcher.StartListeningNetworkEvents();
         }
 
         catch (Exception e)

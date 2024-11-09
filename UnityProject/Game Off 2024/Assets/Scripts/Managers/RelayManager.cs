@@ -19,24 +19,29 @@ public class RelayManager : MonoSingleton<RelayManager>
     // [SerializeField] private TMP_InputField joinInput;
     // [SerializeField] private TMP_Text codeText;
 
-    public Action OnRelayJoined;
-    public Action OnRelayCreated;
+    public Action OnRelayDataSet;
+    public Action<string> OnRelayCodeCreated;
 
     public async void JoinRelay(string joinCode)
     {
-        var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
-        RelayServerData relayServerData = joinAllocation.ToRelayServerData("dtls");
+        try
+        {
+            var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+            RelayServerData relayServerData = joinAllocation.ToRelayServerData("dtls");
 
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
-        //codeText.text = $"Code: {joinCode}";
-        
-        NetworkManager.Singleton.StartClient();
-        UIManager.Instance.HideMainMenu();
-        
+            Debug.Log($"Relay data set using code {joinCode}");
+            OnRelayDataSet?.Invoke();
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
+
     }
 
-    public async Task<string> CreateRelay()
+    public async Task CreateRelay()
     {
         try
         {
@@ -47,15 +52,14 @@ public class RelayManager : MonoSingleton<RelayManager>
             RelayServerData relayServerData = allocation.ToRelayServerData("dtls");
 
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
-
-            NetworkManager.Singleton.StartHost();
-            UIManager.Instance.HideMainMenu();
-            return joinCode;
+            Debug.Log($"Relay code created: {joinCode}");
+            OnRelayCodeCreated?.Invoke(joinCode);
+            Debug.Log($"Relay data set");
+            OnRelayDataSet?.Invoke();
         }
         catch (Exception e)
         {
             Debug.LogException(e);
-            return null;
         }
     }
 }

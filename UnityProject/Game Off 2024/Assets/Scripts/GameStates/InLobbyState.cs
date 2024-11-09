@@ -10,17 +10,24 @@ public class InLobbyState : AppState
 {
     public override EAppStateId Id => EAppStateId.InLobby;
 
-    private bool isGameStarted = false;
+    private bool isGameDataReady = false;
 
     public override void OnEnter()
     {
+        isGameDataReady = false;
         _transitions = new List<AppStateTransition>
         {
-            new AppStateTransition(EAppStateId.InGame, IsGameStarted ),
+            new AppStateTransition(EAppStateId.StartingGame, IsGameDataReady ),
             new AppStateTransition(EAppStateId.LookingForLobby, ()=> !IsInLobby())
         };
+        RelayManager.Instance.OnRelayDataSet += OnRelayDataSet;
         UIManager.Instance.GoToLobbyView();
-        NetworkManager.Singleton.OnClientStarted += OnClientConnected;
+    }
+
+    private void OnRelayDataSet()
+    {
+        RelayManager.Instance.OnRelayDataSet -= OnRelayDataSet;
+        isGameDataReady = true;
     }
 
     private bool IsInLobby()
@@ -28,14 +35,9 @@ public class InLobbyState : AppState
         return LobbyManager.Instance.IsInLobby;
     }
 
-    private void OnClientConnected()
+    private bool IsGameDataReady()
     {
-        isGameStarted = true;
-    }
-
-    private bool IsGameStarted()
-    {
-        return isGameStarted;
+        return isGameDataReady;
     }
 
     public override void OnExit()

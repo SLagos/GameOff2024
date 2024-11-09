@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using NUnit.Framework;
-using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,7 +8,6 @@ public class InGameState : AppState
     public override EAppStateId Id { get => EAppStateId.InGame; }
     public override void OnEnter()
     {
-        SceneManager.LoadSceneAsync(1); //DungeonBlockout
     }
 
     public override void OnExit()

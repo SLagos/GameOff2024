@@ -43,6 +43,9 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void Quit()
     {
+        NetworkEventDispatcher.StopListeningNetworkEvents();
         Application.Quit();
     }
+
+    
 }

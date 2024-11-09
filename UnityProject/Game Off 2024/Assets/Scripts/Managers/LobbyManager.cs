@@ -30,6 +30,15 @@ public class LobbyManager : MonoSingleton<LobbyManager>
 
     public bool IsInLobby { get; private set; }
 
+    public bool IsHost
+    {
+        get
+        {
+            return joinedLobby != null
+            && joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
+        }
+    }
+
     protected override void Start()
     {
         AuthenticationService.Instance.SignedIn += () =>
@@ -43,30 +52,40 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         createLobbyBtn.onClick.AddListener(CreateLobby);
         refreshButton.onClick.AddListener(ListLobbies);
         backButton.onClick.AddListener(BackToLobbies);
-        startGame.onClick.AddListener(StartGame);
+        startGame.onClick.AddListener(CreateRelay);
     }
 
-    private async void StartGame()
+    private async void CreateRelay()
     {
         try
         {
-            string code = await RelayManager.Instance.CreateRelay();
-            if (code != null)
-            {
-                UpdateLobbyOptions options = new UpdateLobbyOptions
-                {
-                    Data = new Dictionary<string, DataObject>
-                    {
-                        {"RelayCode", new DataObject(DataObject.VisibilityOptions.Member, code, DataObject.IndexOptions.S2)},
-                        {"StartGame", new DataObject(visibility: DataObject.VisibilityOptions.Member,value: "1",index: DataObject.IndexOptions.S1)}
-                    }
-                };
-                await LobbyService.Instance.UpdateLobbyAsync(hostLobby.Id, options);
-            }
+            RelayManager.Instance.OnRelayCodeCreated += SendRelayCodeToLobby;
+            await RelayManager.Instance.CreateRelay();
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
+        }
+    }
+
+    private async void SendRelayCodeToLobby(string relayCode)
+    {
+        RelayManager.Instance.OnRelayCodeCreated -= SendRelayCodeToLobby;
+        try
+        {
+            UpdateLobbyOptions options = new UpdateLobbyOptions
+            {
+                Data = new Dictionary<string, DataObject>
+                    {
+                        {"RelayCode", new DataObject(DataObject.VisibilityOptions.Member, relayCode, DataObject.IndexOptions.S2)},
+                        {"StartGame", new DataObject(visibility: DataObject.VisibilityOptions.Member,value: "1",index: DataObject.IndexOptions.S1)}
+                    }
+            };
+            await LobbyService.Instance.UpdateLobbyAsync(hostLobby.Id, options);
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.LogException(e);
         }
     }
 
@@ -135,6 +154,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     {
         try
         {
+            startGame.gameObject.SetActive(lobby.HostId == AuthenticationService.Instance.PlayerId);
             UIManager.Instance.GoToLobbyView();
             var OnLobbyEvent = new LobbyEventCallbacks();
             OnLobbyEvent.PlayerJoined += OnPlayerJoined;
@@ -144,7 +164,6 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             await LobbyService.Instance.SubscribeToLobbyEventsAsync(lobby.Id, OnLobbyEvent);
 
             UpdatePlayersView();
-            startGame.gameObject.SetActive(lobby.HostId == AuthenticationService.Instance.PlayerId);
             IsInLobby = true;
 
         }
@@ -164,7 +183,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     private void OnDataChanged(Dictionary<string, ChangedOrRemovedLobbyValue<DataObject>> dictionary)
     {
         //Do not run this code if I am the Hosting the lobby
-        if (joinedLobby.HostId == AuthenticationService.Instance.PlayerId) return;
+        if (IsHost) return;
         string relayCode = dictionary["RelayCode"].Value.Value;
         if (relayCode != null)
         {

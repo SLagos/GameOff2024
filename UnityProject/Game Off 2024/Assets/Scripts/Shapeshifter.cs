@@ -97,9 +97,11 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
     {
         if (currentShape == null) return;
 
-        // Destroy previous shape instance if it exists
+        // Destroy previous shape instance and remove old collider
         if (currentShapeInstance != null)
         {
+            var oldCollider = GetComponent<Collider>();
+            if (oldCollider != null) Destroy(oldCollider);
             Destroy(currentShapeInstance);
         }
 
@@ -108,8 +110,35 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         currentShapeInstance.transform.localPosition = Vector3.zero;
         currentShapeInstance.transform.localRotation = Quaternion.identity;
 
-        // Update movement speed
-        Debug.Log($"Updating speed to: {currentShape.speed}");
+        // Copy collider from visual prefab to player
+        var prefabCollider = currentShapeInstance.GetComponent<Collider>();
+        if (prefabCollider != null)
+        {
+            var newCollider = gameObject.AddComponent(prefabCollider.GetType()) as Collider;
+            if (newCollider != null)
+            {
+                // Copy all collider properties
+                if (prefabCollider is BoxCollider)
+                {
+                    var boxSource = (BoxCollider)prefabCollider;
+                    var boxTarget = (BoxCollider)newCollider;
+                    boxTarget.center = boxSource.center;
+                    boxTarget.size = boxSource.size;
+                }
+                else if (prefabCollider is CapsuleCollider)
+                {
+                    var capsuleSource = (CapsuleCollider)prefabCollider;
+                    var capsuleTarget = (CapsuleCollider)newCollider;
+                    capsuleTarget.center = capsuleSource.center;
+                    capsuleTarget.radius = capsuleSource.radius;
+                    capsuleTarget.height = capsuleSource.height;
+                    capsuleTarget.direction = capsuleSource.direction;
+                }
+                // Add more collider types as needed
+            }
+        }
+
+        // Update movement speed using the property
         playerMovement.MoveSpeed = currentShape.speed;
     }
 } 

@@ -2,16 +2,14 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 {
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
-    public float MoveSpeed
-    {
-        get => moveSpeed;
-    set => moveSpeed = value;
-    }
+    [SerializeField] private float groundDrag = 5f;
+    [SerializeField] private float airDrag = 1f;
+    [SerializeField] private LayerMask groundMask;
     
     [Header("Animation Settings")]
     [SerializeField] private float animationBlendSpeed = 10f;
@@ -20,7 +18,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     [Header("References")]
     [SerializeField] private Animator animator;
     
-    private CharacterController controller;
+    private Rigidbody rb;
     private PlayerControls controls;
     private Vector2 moveInput;
     private Vector3 moveDirection;
@@ -30,9 +28,15 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     private readonly int MoveZHash = Animator.StringToHash("MoveZ");
     private readonly int IsMovingHash = Animator.StringToHash("IsMoving");
     
+    private bool isGrounded;
+    private float groundCheckDistance = 0.2f;
+    
+    private Collider activeCollider;
+    
     private void Awake()
     {
-        controller = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true; // Prevent rigidbody from rotating
         
         if (animator == null)
         {
@@ -70,8 +74,14 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     private void Update()
     {
         if(!IsOwner) return;
-        HandleMovement();
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundMask);
         UpdateAnimations();
+    }
+
+    private void FixedUpdate()
+    {
+        if(!IsOwner) return;
+        HandleMovement();
     }
 
     private void HandleMovement()
@@ -79,14 +89,24 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
         moveDirection = transform.TransformDirection(moveDirection);
         
-        // Normalize the movement direction to ensure consistent speed
         if (moveDirection.magnitude > 0)
         {
             moveDirection.Normalize();
         }
-        
-        moveDirection.y += Physics.gravity.y;
-        controller.Move(moveDirection * (MoveSpeed * Time.deltaTime));
+
+        // Apply movement force
+        rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Force);
+
+        // Apply appropriate drag
+        rb.linearDamping = isGrounded ? groundDrag : airDrag;
+
+        // Limit velocity to prevent excessive speed
+        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        if (flatVel.magnitude > moveSpeed)
+        {
+            Vector3 limitedVel = flatVel.normalized * moveSpeed;
+            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+        }
     }
 
     private void UpdateAnimations()
@@ -114,8 +134,6 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     // Kept for future debugging if needed
     private void ValidateAnimatorParameters()
     {
-        if (animator == null) return;
-        
         bool foundMoveX = false;
         bool foundMoveZ = false;
         bool foundIsMoving = false;
@@ -137,5 +155,22 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
             Debug.LogError("MoveZ parameter not found in Animator!");
         if (!foundIsMoving)
             Debug.LogError("IsMoving parameter not found in Animator!");
+    }
+
+    public void SetCollider(Collider newCollider)
+    {
+        if (activeCollider != null)
+        {
+            activeCollider.enabled = false;
+        }
+        
+        activeCollider = newCollider;
+        activeCollider.enabled = true;
+    }
+
+    public float MoveSpeed
+    {
+        get => moveSpeed;
+        set => moveSpeed = value;
     }
 } 

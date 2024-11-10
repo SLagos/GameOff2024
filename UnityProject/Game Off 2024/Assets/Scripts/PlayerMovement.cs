@@ -7,8 +7,11 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 {
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float groundDrag = 5f;
+    [SerializeField] private float groundDrag = 15f;
     [SerializeField] private float airDrag = 1f;
+    [SerializeField] private float movementForce = 70f;
+    [SerializeField] private float stopForceMultiplier = 3f;
+    [SerializeField] private float stopThreshold = 0.1f;
     [SerializeField] private LayerMask groundMask;
     
     [Header("Animation Settings")]
@@ -92,15 +95,35 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         if (moveDirection.magnitude > 0)
         {
             moveDirection.Normalize();
+            // Apply movement force
+            rb.AddForce(moveDirection * moveSpeed * movementForce, ForceMode.Force);
+        }
+        else if (isGrounded)
+        {
+            // Get horizontal velocity only
+            Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            
+            if (horizontalVelocity.magnitude < stopThreshold)
+            {
+                // If moving very slowly, stop horizontal movement completely
+                rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            }
+            else
+            {
+                // Apply a strong opposing force to stop quickly
+                Vector3 oppositeForce = -horizontalVelocity.normalized * 
+                                       moveSpeed * 
+                                       movementForce * 
+                                       stopForceMultiplier;
+                
+                rb.AddForce(oppositeForce, ForceMode.Impulse);
+            }
         }
 
-        // Apply movement force
-        rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Force);
-
-        // Apply appropriate drag
+        // Apply drag
         rb.linearDamping = isGrounded ? groundDrag : airDrag;
 
-        // Limit velocity to prevent excessive speed
+        // Limit velocity
         Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         if (flatVel.magnitude > moveSpeed)
         {

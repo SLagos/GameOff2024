@@ -8,8 +8,11 @@ using UnityEngine.SceneManagement;
 [CreateAssetMenu(fileName = nameof(StartingGameState), menuName = "GameStates/" + nameof(StartingGameState), order = 0)]
 public class StartingGameState : AppState
 {
+    [SerializeField]
+    private List<NetworkObject> prefabs;
     private bool isGameSceneLoaded = false;
     private bool isConnectedToGame = false;
+    private bool isPrefabInstantiated = false;
     public override EAppStateId Id { get => EAppStateId.StartingGame; }
     public override async void OnEnter()
     {
@@ -18,9 +21,11 @@ public class StartingGameState : AppState
 
         isGameSceneLoaded = false;
         isConnectedToGame = false;
+        isPrefabInstantiated = false;
 
         NetworkManager.Singleton.NetworkConfig.AutoSpawnPlayerPrefabClientSide = false;
         NetworkEventDispatcher.OnCLientStartedEvent += OnClientStarted;
+        NetworkEventDispatcher.OnClientConnectedEvent += OnClientConnected;
         await SceneManager.LoadSceneAsync(1); //DungeonBlockout
         isGameSceneLoaded = true;
 
@@ -37,17 +42,26 @@ public class StartingGameState : AppState
 
     }
 
+    private void OnClientConnected(ulong obj)
+    {
+        if (!NetworkManager.Singleton.IsHost) return;
+        int prefabIndex = obj == NetworkManager.Singleton.LocalClientId ? 0 : 1;
+        NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(prefabs[prefabIndex], obj, isPlayerObject: true, forceOverride: true);
+
+    }
+
     private void OnClientStarted()
     {
-        if(NetworkManager.Singleton.IsClient)
-        {
-            var player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-            var virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+        // if (NetworkManager.Singleton.IsClient)
+        // {
+        //     var player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+        //     var virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
 
-            virtualCamera.Follow = player.transform;
-            //player.Spawn();
-            isConnectedToGame = true;
-        }
+        //     virtualCamera.Follow = player.transform;
+        //     //player.Spawn();
+        //     isConnectedToGame = true;
+        // }
+        isConnectedToGame = true;
     }
 
     private bool IsFinish()
@@ -63,7 +77,6 @@ public class StartingGameState : AppState
 
     public override void OnUpdate()
     {
-
     }
 
 }

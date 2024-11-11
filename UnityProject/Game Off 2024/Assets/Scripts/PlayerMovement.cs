@@ -1,4 +1,5 @@
 using System;
+using Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,44 +21,44 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     [SerializeField] private float mouseSensitivityY = 2f;
     [SerializeField] private float maxLookUpAngle = 80f;
     [SerializeField] private float minLookUpAngle = -80f;
-    
+
     [Header("Animation Settings")]
     [SerializeField] private float animationBlendSpeed = 10f;
     [SerializeField] private float minimumMoveThreshold = 0.1f;
-    
+
     [Header("References")]
     [SerializeField] private Animator animator;
-    
+
     private Rigidbody rb;
     private PlayerControls controls;
     private Vector2 moveInput;
     private Vector3 moveDirection;
 
     private Vector2 lookInput;
-    
+
     // Animation parameter IDs
     private readonly int MoveXHash = Animator.StringToHash("MoveX");
     private readonly int MoveZHash = Animator.StringToHash("MoveZ");
     private readonly int IsMovingHash = Animator.StringToHash("IsMoving");
-    
+
     private bool isGrounded;
     private float groundCheckDistance = 0.2f;
-    
+
     private Collider activeCollider;
-    
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true; // Prevent rigidbody from rotating
-        
-        if (animator == null)
-        {
-            Debug.LogError("Animator reference not set on PlayerMovement!");
-        }
-        
+
+        // if (animator == null)
+        // {
+        //     Debug.LogError("Animator reference not set on PlayerMovement!");
+        // }
+
         controls = new PlayerControls();
         controls.Player.SetCallbacks(this);
-        
+
         // Uncomment for debugging animation parameters
         // ValidateAnimatorParameters();
     }
@@ -74,28 +75,28 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if(!IsOwner) return;
+        if (!IsOwner) return;
         moveInput = context.ReadValue<Vector2>();
     }
 
     public void OnLook(InputAction.CallbackContext context)
     {
-         lookInput = context.ReadValue<Vector2>();
+        lookInput = context.ReadValue<Vector2>();
     }
 
     private void Update()
     {
-        if(!IsOwner) return;
+        if (!IsOwner) return;
         isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundMask);
         UpdateAnimations();
     }
 
     private void FixedUpdate()
     {
-        if(!IsOwner) return;
+        if (!IsOwner) return;
         HandleMovement();
         HandleRotation();
-    
+
     }
 
     private void HandleRotation()
@@ -105,11 +106,11 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
             // Handle horizontal rotation (player rotation)
             float horizontalRotation = lookInput.x * mouseSensitivityX;
             transform.Rotate(Vector3.up, horizontalRotation);
-            
+
             // Handle vertical rotation (camera pitch)
             // cameraPitch -= lookInput.y * mouseSensitivityY;
             // cameraPitch = Mathf.Clamp(cameraPitch, minLookUpAngle, maxLookUpAngle);
-            
+
             // // Apply pitch to camera root
             // cameraRoot.localRotation = Quaternion.Euler(cameraPitch, 0, 0);
         }
@@ -119,7 +120,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     {
         moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
         moveDirection = transform.TransformDirection(moveDirection);
-        
+
         if (moveDirection.magnitude > 0)
         {
             moveDirection.Normalize();
@@ -130,7 +131,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         {
             // Get horizontal velocity only
             Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            
+
             if (horizontalVelocity.magnitude < stopThreshold)
             {
                 // If moving very slowly, stop horizontal movement completely
@@ -139,11 +140,11 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
             else
             {
                 // Apply a strong opposing force to stop quickly
-                Vector3 oppositeForce = -horizontalVelocity.normalized * 
-                                       moveSpeed * 
-                                       movementForce * 
+                Vector3 oppositeForce = -horizontalVelocity.normalized *
+                                       moveSpeed *
+                                       movementForce *
                                        stopForceMultiplier;
-                
+
                 rb.AddForce(oppositeForce, ForceMode.Impulse);
             }
         }
@@ -166,17 +167,17 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         if (animator == null) return;
 
         Vector3 localMovement = transform.InverseTransformDirection(moveDirection);
-        
+
         float moveX = localMovement.x;
         float moveZ = localMovement.z;
-        
+
         // Smoothly interpolate current animation values to target values
         float currentMoveX = animator.GetFloat(MoveXHash);
         float currentMoveZ = animator.GetFloat(MoveZHash);
-        
+
         animator.SetFloat(MoveXHash, Mathf.Lerp(currentMoveX, moveX, Time.deltaTime * animationBlendSpeed));
         animator.SetFloat(MoveZHash, Mathf.Lerp(currentMoveZ, moveZ, Time.deltaTime * animationBlendSpeed));
-        
+
         // Set IsMoving parameter based on raw input magnitude instead of moveDirection
         bool isMoving = moveInput.magnitude > minimumMoveThreshold;
         animator.SetBool(IsMovingHash, isMoving);
@@ -188,17 +189,17 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         bool foundMoveX = false;
         bool foundMoveZ = false;
         bool foundIsMoving = false;
-        
+
         // Log all parameters and check if ours exist
         foreach (AnimatorControllerParameter param in animator.parameters)
         {
             Debug.Log($"Found parameter: {param.name}, type: {param.type}");
-            
+
             if (param.nameHash == MoveXHash) foundMoveX = true;
             if (param.nameHash == MoveZHash) foundMoveZ = true;
             if (param.nameHash == IsMovingHash) foundIsMoving = true;
         }
-        
+
         // Report any missing parameters
         if (!foundMoveX)
             Debug.LogError("MoveX parameter not found in Animator!");
@@ -214,7 +215,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         {
             activeCollider.enabled = false;
         }
-        
+
         activeCollider = newCollider;
         activeCollider.enabled = true;
     }
@@ -224,4 +225,16 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         get => moveSpeed;
         set => moveSpeed = value;
     }
-} 
+
+    public void SetAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
+    protected override void OnNetworkPostSpawn()
+    {
+        if (!IsOwner) return;
+        var virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+        virtualCamera.Follow = transform;
+    }
+}

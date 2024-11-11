@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine.InputSystem;
 using System.Linq;
+using Cinemachine;
+using UnityEditor.SceneManagement;
 
 public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
 {
@@ -10,14 +12,17 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
     [SerializeField] private MimicLibrary mimicLibrary;
     [SerializeField] private List<MimicsList> availableShapes = new List<MimicsList>();
     private MimicData currentShape;
-    
+
     [Header("References")]
     [SerializeField] private Transform visualParent;
-    
+
     private PlayerMovement playerMovement;
     private GameObject currentShapeInstance;
     private int currentShapeIndex = 0;
     private PlayerControls controls;
+    private ClientNetworkAnimator clientNetworkAnimator;
+
+    private CinemachineVirtualCamera virtualCamera;
 
     private void Awake()
     {
@@ -49,34 +54,41 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
     public override void OnNetworkSpawn()
     {
         if (!IsOwner) return;
-        
+
         if (availableShapes.Count > 0)
         {
             currentShape = GetMimicDataFromEnum(availableShapes[0]);
         }
-        
+
         ApplyCurrentShape();
+    }
+
+    protected override void OnNetworkPostSpawn()
+    {
+        if (!IsOwner) return;
+        virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+        virtualCamera.Follow = transform;
     }
 
     private MimicData GetMimicDataFromEnum(MimicsList mimicType)
     {
         if (mimicType == MimicsList.None) return null;
-        
+
         string mimicId = mimicType.ToString();
         MimicData mimicData = mimicLibrary.mimics.FirstOrDefault(m => m.id == mimicId);
-        
+
         if (mimicData == null)
         {
             Debug.LogError($"No MimicData found for ID: {mimicId}");
         }
-        
+
         return mimicData;
     }
 
     public void OnShapeshift(InputAction.CallbackContext context)
     {
         if (!IsOwner) return;
-        
+
         if (context.performed)
         {
             CycleToNextShape();
@@ -89,7 +101,7 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
 
         currentShapeIndex = (currentShapeIndex + 1) % availableShapes.Count;
         currentShape = GetMimicDataFromEnum(availableShapes[currentShapeIndex]);
-        
+
         ApplyCurrentShape();
     }
 
@@ -138,7 +150,23 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
             }
         }
 
+        var componentBase = virtualCamera.GetCinemachineComponent(CinemachineCore.Stage.Body);
+        if (componentBase is Cinemachine3rdPersonFollow)
+        {
+            (componentBase as Cinemachine3rdPersonFollow).CameraDistance = currentShape.cameraDistance;
+            (componentBase as Cinemachine3rdPersonFollow).VerticalArmLength = currentShape.camerHeight;
+        }
+
+        // var animator = currentShapeInstance.GetComponent<Animator>();
+        // playerMovement.SetAnimator(animator);
+
+        // if (clientNetworkAnimator == null)
+        // {
+        //     clientNetworkAnimator = gameObject.AddComponent<ClientNetworkAnimator>();
+        // }
+        // clientNetworkAnimator.Animator = animator;
+
         // Update movement speed using the property
         playerMovement.MoveSpeed = currentShape.speed;
     }
-} 
+}

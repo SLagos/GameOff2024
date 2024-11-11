@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d35e4ce100055584b8717f222dc86a6e, type: 3}
   m_Name: StartingGameState
   m_EditorClassIdentifier: 
+  prefabs:
+  - {fileID: 5870172551627924275, guid: cc0389eef48372d40b68fab4e06f2a7b, type: 3}
+  - {fileID: 5870172551627924275, guid: e8d4e8640576d65469d57cf51910b9f7, type: 3}

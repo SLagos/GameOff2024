@@ -10,22 +10,17 @@ public class InGameState : AppState
     public override EAppStateId Id { get => EAppStateId.InGame; }
     public override void OnEnter()
     {
-        NetworkEventDispatcher.OnClientDisconnectedEvent += OnClientDisconnected;
+        NetworkEventDispatcher.OnCLientStoppedEvent += OnClientStopped;
     }
 
-    private void OnClientDisconnected(ulong obj)
+    private void OnClientStopped(bool obj)
     {
-        if(obj == NetworkManager.Singleton.LocalClientId && !NetworkManager.Singleton.ShutdownInProgress)
-        {
-            //This client was disconnected, will try to reconnect once
-            //Rework eventually
-            NetworkManager.Singleton.StartClient();
-        }
+        NetworkManager.Singleton.StartClient();
     }
 
     public override void OnExit()
     {
-        NetworkEventDispatcher.OnClientDisconnectedEvent -= OnClientDisconnected;
+        NetworkEventDispatcher.OnCLientStoppedEvent -= OnClientStopped;
     }
 
     public override void OnUpdate()

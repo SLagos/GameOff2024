@@ -54,6 +54,7 @@ public class PlayerCamera : NetworkBehaviour, PlayerControls.IPlayerActions
         if(!IsOwner && virtualCamera.gameObject.activeSelf)
         {
             virtualCamera.gameObject.SetActive(false);
+            this.enabled = false;
             return;
         } 
         if (lookInput != Vector2.zero)

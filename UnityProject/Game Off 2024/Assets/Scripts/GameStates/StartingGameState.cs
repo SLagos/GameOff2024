@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -41,6 +42,9 @@ public class StartingGameState : AppState
         if(NetworkManager.Singleton.IsClient)
         {
             var player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+            var virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+
+            virtualCamera.Follow = player.transform;
             //player.Spawn();
             isConnectedToGame = true;
         }

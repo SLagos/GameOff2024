@@ -15,7 +15,7 @@ public class InGameState : AppState
 
     private void OnClientDisconnected(ulong obj)
     {
-        if(obj == NetworkManager.Singleton.LocalClientId)
+        if(obj == NetworkManager.Singleton.LocalClientId && !NetworkManager.Singleton.ShutdownInProgress)
         {
             //This client was disconnected, will try to reconnect once
             //Rework eventually

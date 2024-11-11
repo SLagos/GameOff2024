@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,6 +14,12 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     [SerializeField] private float stopForceMultiplier = 3f;
     [SerializeField] private float stopThreshold = 0.1f;
     [SerializeField] private LayerMask groundMask;
+
+    [Header("Camera Settings")]
+    [SerializeField] private float mouseSensitivityX = 2f;
+    [SerializeField] private float mouseSensitivityY = 2f;
+    [SerializeField] private float maxLookUpAngle = 80f;
+    [SerializeField] private float minLookUpAngle = -80f;
     
     [Header("Animation Settings")]
     [SerializeField] private float animationBlendSpeed = 10f;
@@ -25,6 +32,8 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     private PlayerControls controls;
     private Vector2 moveInput;
     private Vector3 moveDirection;
+
+    private Vector2 lookInput;
     
     // Animation parameter IDs
     private readonly int MoveXHash = Animator.StringToHash("MoveX");
@@ -71,7 +80,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 
     public void OnLook(InputAction.CallbackContext context)
     {
-        // Implementation required by interface
+         lookInput = context.ReadValue<Vector2>();
     }
 
     private void Update()
@@ -85,6 +94,25 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     {
         if(!IsOwner) return;
         HandleMovement();
+        HandleRotation();
+    
+    }
+
+    private void HandleRotation()
+    {
+        if (lookInput != Vector2.zero)
+        {
+            // Handle horizontal rotation (player rotation)
+            float horizontalRotation = lookInput.x * mouseSensitivityX;
+            transform.Rotate(Vector3.up, horizontalRotation);
+            
+            // Handle vertical rotation (camera pitch)
+            // cameraPitch -= lookInput.y * mouseSensitivityY;
+            // cameraPitch = Mathf.Clamp(cameraPitch, minLookUpAngle, maxLookUpAngle);
+            
+            // // Apply pitch to camera root
+            // cameraRoot.localRotation = Quaternion.Euler(cameraPitch, 0, 0);
+        }
     }
 
     private void HandleMovement()

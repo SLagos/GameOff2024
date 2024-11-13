@@ -53,14 +53,17 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
 
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner) return;
+        //if (!IsOwner) return;
 
         if (availableShapes.Count > 0)
         {
             currentShape = GetMimicDataFromEnum(availableShapes[0]);
         }
 
-        ApplyCurrentShape();
+        if (IsServer)
+            ApplyCurrentShapeServer();
+        else
+            ApplyCurrentShapeServerRpc();
     }
 
     protected override void OnNetworkPostSpawn()
@@ -101,28 +104,40 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
 
         currentShapeIndex = (currentShapeIndex + 1) % availableShapes.Count;
         currentShape = GetMimicDataFromEnum(availableShapes[currentShapeIndex]);
-
-        ApplyCurrentShape();
+        if (IsServer)
+            ApplyCurrentShapeServer();
+        else
+            ApplyCurrentShapeServerRpc();
+    }
+    [ServerRpc]
+    private void ApplyCurrentShapeServerRpc()
+    {
+        ApplyCurrentShapeServer();
     }
 
-    private void ApplyCurrentShape()
+    private void ApplyCurrentShapeServer()
     {
         if (currentShape == null) return;
+        
 
         // Destroy previous shape instance and remove old collider
         if (currentShapeInstance != null)
         {
+            currentShapeInstance.GetComponent<NetworkObject>().Despawn();
             var oldCollider = GetComponent<Collider>();
             if (oldCollider != null) Destroy(oldCollider);
             Destroy(currentShapeInstance);
         }
 
         // Instantiate new shape
-        currentShapeInstance = Instantiate(currentShape.visualPrefab, visualParent);
+        var networkObject =  Instantiate(currentShape.visualPrefab).GetComponent<NetworkObject>();
+        //NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(currentShape.visualPrefab.GetComponent<NetworkObject>(), OwnerClientId, isPlayerObject: true, forceOverride: true);
+        
+        currentShapeInstance = networkObject.gameObject;
         currentShapeInstance.transform.localPosition = Vector3.zero;
         currentShapeInstance.transform.localRotation = Quaternion.identity;
 
-        // Copy collider from visual prefab to player
+        //Copy collider from visual prefab to player
         var prefabCollider = currentShapeInstance.GetComponent<Collider>();
         if (prefabCollider != null)
         {
@@ -150,12 +165,16 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
             }
         }
 
-        var componentBase = virtualCamera.GetCinemachineComponent(CinemachineCore.Stage.Body);
-        if (componentBase is Cinemachine3rdPersonFollow)
-        {
-            (componentBase as Cinemachine3rdPersonFollow).CameraDistance = currentShape.cameraDistance;
-            (componentBase as Cinemachine3rdPersonFollow).VerticalArmLength = currentShape.camerHeight;
-        }
+        networkObject.SpawnWithOwnership(OwnerClientId);
+        networkObject.TrySetParent(visualParent);
+        
+
+        // var componentBase = virtualCamera.GetCinemachineComponent(CinemachineCore.Stage.Body);
+        // if (componentBase is Cinemachine3rdPersonFollow)
+        // {
+        //     (componentBase as Cinemachine3rdPersonFollow).CameraDistance = currentShape.cameraDistance;
+        //     (componentBase as Cinemachine3rdPersonFollow).VerticalArmLength = currentShape.camerHeight;
+        // }
 
         // var animator = currentShapeInstance.GetComponent<Animator>();
         // playerMovement.SetAnimator(animator);

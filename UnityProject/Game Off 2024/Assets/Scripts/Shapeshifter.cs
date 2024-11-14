@@ -61,9 +61,9 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         }
 
         if (IsServer)
-            ApplyCurrentShapeServer();
+            ApplyCurrentShapeServer(currentShapeIndex);
         else
-            ApplyCurrentShapeServerRpc();
+            ApplyCurrentShapeServerRpc(currentShapeIndex);
     }
 
     protected override void OnNetworkPostSpawn()
@@ -103,20 +103,21 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         if (availableShapes.Count == 0) return;
 
         currentShapeIndex = (currentShapeIndex + 1) % availableShapes.Count;
-        currentShape = GetMimicDataFromEnum(availableShapes[currentShapeIndex]);
         if (IsServer)
-            ApplyCurrentShapeServer();
+            ApplyCurrentShapeServer(currentShapeIndex);
         else
-            ApplyCurrentShapeServerRpc();
+            ApplyCurrentShapeServerRpc(currentShapeIndex);
     }
     [ServerRpc]
-    private void ApplyCurrentShapeServerRpc()
+    private void ApplyCurrentShapeServerRpc(int shapeIndex)
     {
-        ApplyCurrentShapeServer();
+        ApplyCurrentShapeServer(shapeIndex);
     }
 
-    private void ApplyCurrentShapeServer()
+    private void ApplyCurrentShapeServer(int shapeIndex)
     {
+        currentShapeIndex = shapeIndex;
+        currentShape = GetMimicDataFromEnum(availableShapes[currentShapeIndex]);
         if (currentShape == null) return;
         
 
@@ -130,7 +131,7 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         }
 
         // Instantiate new shape
-        var networkObject =  Instantiate(currentShape.visualPrefab).GetComponent<NetworkObject>();
+        var networkObject =  Instantiate(currentShape.visualPrefab, visualParent).GetComponent<NetworkObject>();
         //NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(currentShape.visualPrefab.GetComponent<NetworkObject>(), OwnerClientId, isPlayerObject: true, forceOverride: true);
         
         currentShapeInstance = networkObject.gameObject;

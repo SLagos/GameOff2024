@@ -107,6 +107,7 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
             ApplyCurrentShapeServer(currentShapeIndex);
         else
             ApplyCurrentShapeServerRpc(currentShapeIndex);
+
     }
     [ServerRpc]
     private void ApplyCurrentShapeServerRpc(int shapeIndex)

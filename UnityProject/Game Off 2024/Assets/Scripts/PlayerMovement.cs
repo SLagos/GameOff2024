@@ -14,6 +14,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     [SerializeField] private float movementForce = 70f;
     [SerializeField] private float stopForceMultiplier = 3f;
     [SerializeField] private float stopThreshold = 0.1f;
+    [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private LayerMask groundMask;
 
     [Header("Camera Settings")]
@@ -22,6 +23,8 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     [SerializeField] private float maxLookUpAngle = 80f;
     [SerializeField] private float minLookUpAngle = -80f;
 
+    [SerializeField] private Transform followTarget;
+
     [Header("Animation Settings")]
     [SerializeField] private float animationBlendSpeed = 10f;
     [SerializeField] private float minimumMoveThreshold = 0.1f;
@@ -29,6 +32,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     [Header("References")]
     [SerializeField] private Animator animator;
 
+    private Camera playerCamera;
     private Rigidbody rb;
     private PlayerControls controls;
     private Vector2 moveInput;
@@ -95,36 +99,44 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     {
         if (!IsOwner) return;
         HandleMovement();
-        HandleRotation();
+        //HandleRotation();
 
     }
 
     private void HandleRotation()
     {
-        if (lookInput != Vector2.zero)
+        if (moveDirection != Vector3.zero)
         {
-            // Handle horizontal rotation (player rotation)
-            float horizontalRotation = lookInput.x * mouseSensitivityX;
-            transform.Rotate(Vector3.up, horizontalRotation);
-
-            // Handle vertical rotation (camera pitch)
-            // cameraPitch -= lookInput.y * mouseSensitivityY;
-            // cameraPitch = Mathf.Clamp(cameraPitch, minLookUpAngle, maxLookUpAngle);
-
-            // // Apply pitch to camera root
-            // cameraRoot.localRotation = Quaternion.Euler(cameraPitch, 0, 0);
+            Quaternion toRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.fixedDeltaTime);
         }
     }
 
     private void HandleMovement()
     {
-        moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        moveDirection = transform.TransformDirection(moveDirection);
+        Vector3 cameraForward = playerCamera.transform.forward;
+        Vector3 cameraRight = playerCamera.transform.right;
 
+        // Project these vectors onto the horizontal plane
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // Calculate the move direction in world space
+        Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
+
+        // Rotate the character to match the camera's forward direction
+        if (moveDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+        }
+
+
+        // Apply movement force
         if (moveDirection.magnitude > 0)
         {
-            moveDirection.Normalize();
-            // Apply movement force
             rb.AddForce(moveDirection * moveSpeed * movementForce, ForceMode.Force);
         }
         else if (isGrounded)
@@ -175,8 +187,8 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         float currentMoveX = animator.GetFloat(MoveXHash);
         float currentMoveZ = animator.GetFloat(MoveZHash);
 
-        animator.SetFloat(MoveXHash, Mathf.Lerp(currentMoveX, moveX, Time.deltaTime * animationBlendSpeed));
-        animator.SetFloat(MoveZHash, Mathf.Lerp(currentMoveZ, moveZ, Time.deltaTime * animationBlendSpeed));
+        animator.SetFloat(MoveXHash,moveInput.x);
+        animator.SetFloat(MoveZHash,moveInput.y);
 
         // Set IsMoving parameter based on raw input magnitude instead of moveDirection
         bool isMoving = moveInput.magnitude > minimumMoveThreshold;
@@ -234,7 +246,17 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
     protected override void OnNetworkPostSpawn()
     {
         if (!IsOwner) return;
-        var virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
-        virtualCamera.Follow = transform;
+        playerCamera = Camera.main;
+        var virtualCamera = FindAnyObjectByType<CinemachineFreeLook>();
+        virtualCamera.Follow = followTarget;
+        virtualCamera.LookAt = followTarget;
+
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (!IsOwner) return;
+        if (hasFocus) Cursor.lockState = CursorLockMode.Locked;
+        else Cursor.lockState = CursorLockMode.None;
     }
 }

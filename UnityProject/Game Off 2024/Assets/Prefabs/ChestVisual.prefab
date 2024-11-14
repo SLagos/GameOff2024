@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3149169590218985245}
   - component: {fileID: 6933076931807565240}
   - component: {fileID: 283826398369759872}
+  - component: {fileID: 8801199469840904422}
   m_Layer: 0
   m_Name: ChestVisual
   m_TagString: Untagged
@@ -80,6 +81,21 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &8801199469840904422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2377840826715166119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5565e11b33e031848960e769a84c2d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 3995468218547012425}
 --- !u!1001 &8544077408816186969
 PrefabInstance:
   m_ObjectHideFlags: 0

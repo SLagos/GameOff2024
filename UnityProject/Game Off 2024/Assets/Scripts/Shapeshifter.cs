@@ -189,5 +189,13 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
 
         // Update movement speed using the property
         playerMovement.MoveSpeed = currentShape.speed;
+        SetupNewFollowTargetClientRpc();
     }
+
+    [ClientRpc]
+    private void SetupNewFollowTargetClientRpc()
+    {
+        if(!IsOwner) return;
+        playerMovement.SetFollowTarget(transform);
+    }  
 }

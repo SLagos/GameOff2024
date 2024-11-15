@@ -15,7 +15,8 @@ public class InGameState : AppState
 
     private void OnClientStopped(bool obj)
     {
-        NetworkManager.Singleton.StartClient();
+        if(NetworkManager.Singleton.ShutdownInProgress) return;
+        //NetworkManager.Singleton.StartClient();
     }
 
     public override void OnExit()

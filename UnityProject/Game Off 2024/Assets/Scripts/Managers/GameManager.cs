@@ -8,6 +8,8 @@ public class GameManager : MonoSingleton<GameManager>
 
     private Dictionary<EAppStateId,AppState> appStates = new Dictionary<EAppStateId,AppState>();
 
+    public bool IsQuickPlay { get; private set; }
+
     protected override void Awake()
     {
         base.Awake();
@@ -37,6 +39,11 @@ public class GameManager : MonoSingleton<GameManager>
     void Update()
     {
         appState?.Update();
+    }
+
+    public void SetQuickStart(bool isQuickPlay)
+    {
+        IsQuickPlay = isQuickPlay;
     }
 
 

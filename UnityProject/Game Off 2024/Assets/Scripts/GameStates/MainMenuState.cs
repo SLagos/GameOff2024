@@ -10,17 +10,28 @@ public class MainMenuState : AppState
 {
     public override EAppStateId Id { get => EAppStateId.MainMenu; }
 
+    public bool IsQuickStart = false;
+
     public override void OnEnter()
     {
         _transitions = new List<AppStateTransition>
-        {new AppStateTransition(EAppStateId.LookingForLobby, IsLookingForLobby )};
+        {
+            new AppStateTransition(EAppStateId.LookingForLobby, IsLookingForLobby ),
+            new AppStateTransition(EAppStateId.StartingGame, IsQuickPlay ),
+        };
         UIManager.Instance.ShowMainMenu();
+        GameManager.Instance.SetQuickStart(IsQuickStart);
 
     }
 
     private bool IsLookingForLobby()
     {
-        return true;
+        return !IsQuickStart;
+    }
+
+    private bool IsQuickPlay()
+    {
+        return IsQuickStart;
     }
 
     public override void OnExit()

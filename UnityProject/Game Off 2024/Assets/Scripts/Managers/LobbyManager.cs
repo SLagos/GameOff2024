@@ -122,7 +122,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         try
         {
             string lobbyName = "new lobby";
-            int maxPlayers = 4;
+            int maxPlayers = 8;
             CreateLobbyOptions options = new CreateLobbyOptions();
             options.IsPrivate = false;
             options.Data = new Dictionary<string, DataObject>()

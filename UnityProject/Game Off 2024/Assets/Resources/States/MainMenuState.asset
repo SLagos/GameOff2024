@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b84ba6a3ecede364ca1ecd863d02e5d7, type: 3}
   m_Name: MainMenuState
   m_EditorClassIdentifier: 
+  IsQuickStart: 1

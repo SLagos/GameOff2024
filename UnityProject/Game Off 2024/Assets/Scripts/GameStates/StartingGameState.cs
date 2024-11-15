@@ -10,6 +10,8 @@ public class StartingGameState : AppState
 {
     [SerializeField]
     private List<NetworkObject> prefabs;
+    [SerializeField]
+    private NetworkObject overridePrefab;
     private bool isGameSceneLoaded = false;
     private bool isConnectedToGame = false;
     private bool isPrefabInstantiated = false;
@@ -29,7 +31,12 @@ public class StartingGameState : AppState
         await SceneManager.LoadSceneAsync(1); //DungeonBlockout
         isGameSceneLoaded = true;
 
-        if (LobbyManager.Instance.IsHost)
+        if (GameManager.Instance.IsQuickPlay)
+        {
+            await RelayManager.Instance.CreateRelay();
+        }
+
+        if (LobbyManager.Instance.IsHost || GameManager.Instance.IsQuickPlay)
         {
             Debug.Log("Starting host");
             NetworkManager.Singleton.StartHost();
@@ -46,8 +53,14 @@ public class StartingGameState : AppState
     {
         if (!NetworkManager.Singleton.IsHost) return;
         int prefabIndex = obj == NetworkManager.Singleton.LocalClientId ? 0 : 1;
-        NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(prefabs[prefabIndex], obj, isPlayerObject: true, forceOverride: true);
-
+        if (overridePrefab == null)
+        {
+            NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(prefabs[prefabIndex], obj, isPlayerObject: true, forceOverride: true);
+        }
+        else
+        {
+            NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(overridePrefab, obj, isPlayerObject: true, forceOverride: true);
+        }
     }
 
     private void OnClientStarted()

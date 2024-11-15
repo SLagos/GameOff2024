@@ -15,3 +15,4 @@ MonoBehaviour:
   prefabs:
   - {fileID: 5870172551627924275, guid: cc0389eef48372d40b68fab4e06f2a7b, type: 3}
   - {fileID: 5870172551627924275, guid: e8d4e8640576d65469d57cf51910b9f7, type: 3}
+  overridePrefab: {fileID: 5870172551627924275, guid: e8d4e8640576d65469d57cf51910b9f7, type: 3}

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8684066725390074434}
   - component: {fileID: 7704417848387167615}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Virtual Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,7 +81,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6364513783089246160}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CameraParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 2963464653566924353}
   - component: {fileID: 8232552113477004732}
   - component: {fileID: 2394235034078505575}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mimic Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 374807421
+  GlobalObjectIdHash: 1027675767
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -195,7 +195,6 @@ MonoBehaviour:
   mouseSensitivityY: 2
   maxLookUpAngle: 80
   minLookUpAngle: -80
-  forceStandaloneMode: 0
   followTarget: {fileID: 0}
   animationBlendSpeed: 10
   minimumMoveThreshold: 0.1
@@ -325,7 +324,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1632709526006919966}
   - component: {fileID: 87264987794396153}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}

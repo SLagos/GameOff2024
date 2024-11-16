@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2222800234624401982}
   - component: {fileID: 7432201047761693421}
   - component: {fileID: 4088407889446336166}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: stairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 3518772489177652600}
   - component: {fileID: 8305947196669350012}
   - component: {fileID: 4251882563450225345}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: stairs_full_railing (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 7024993531406809132}
   - component: {fileID: 4687832360707296297}
   - component: {fileID: 4269887545208198952}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: stairs_full_steps (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

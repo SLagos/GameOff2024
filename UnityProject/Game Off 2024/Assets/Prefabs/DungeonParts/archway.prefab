@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6956876568714776968}
   - component: {fileID: 7779563431375500123}
   - component: {fileID: 3217658794269759597}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: archway
   m_TagString: Untagged
   m_Icon: {fileID: 0}

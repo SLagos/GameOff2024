@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3146329927406865164}
   - component: {fileID: 454005724900900945}
   - component: {fileID: 6770264648662901578}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4853,7 +4853,7 @@ GameObject:
   - component: {fileID: 6279827214850859330}
   - component: {fileID: 5091629085635328897}
   - component: {fileID: 2736417204318674750}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: torch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4942,7 +4942,7 @@ GameObject:
   - component: {fileID: 8421889966728653195}
   - component: {fileID: 887107783367478093}
   - component: {fileID: 4722261545709222800}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

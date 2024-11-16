@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8197673403660595323}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DeskVisual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 7972139577960322994}
   - component: {fileID: 8625160565910409946}
   - component: {fileID: 6215093674740234873}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: desk
   m_TagString: Untagged
   m_Icon: {fileID: 0}

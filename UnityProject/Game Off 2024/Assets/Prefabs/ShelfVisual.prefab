@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3149169590218985245}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ShelfVisual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 5943440933722762229}
   - component: {fileID: 5522063495796708524}
   - component: {fileID: 2922077718933515592}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: shelf
   m_TagString: Untagged
   m_Icon: {fileID: 0}

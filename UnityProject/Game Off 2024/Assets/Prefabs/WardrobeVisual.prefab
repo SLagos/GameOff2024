@@ -48,9 +48,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5836460712609173739, guid: b846eb0dbd64edb4f9863104f75ffe48, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b846eb0dbd64edb4f9863104f75ffe48, type: 3}
       propertyPath: m_Name
-      value: wardrobe
+      value: WardrobeVisual
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b846eb0dbd64edb4f9863104f75ffe48, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1492829993805896954, guid: b846eb0dbd64edb4f9863104f75ffe48, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2507530900539082180, guid: b846eb0dbd64edb4f9863104f75ffe48, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6006477083897338511, guid: b846eb0dbd64edb4f9863104f75ffe48, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -375,8 +375,8 @@ MonoBehaviour:
     m_Bits: 128
   target: {fileID: 0}
   meshResolution: 1
-  edgeResolveIterations: 0
-  edgeDstThreshold: 0
+  edgeResolveIterations: 4
+  edgeDstThreshold: 0.5
   visibleTargets: []
   viewMeshFilter: {fileID: 7925502407179843454}
 --- !u!1 &5085161510725807537
@@ -487,7 +487,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 95bb9e119e65885499c52260111be543, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

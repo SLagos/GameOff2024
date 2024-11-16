@@ -187,8 +187,8 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         float currentMoveX = animator.GetFloat(MoveXHash);
         float currentMoveZ = animator.GetFloat(MoveZHash);
 
-        animator.SetFloat(MoveXHash, moveInput.x);
-        animator.SetFloat(MoveZHash, moveInput.y);
+        animator.SetFloat(MoveXHash,moveInput.x);
+        animator.SetFloat(MoveZHash,moveInput.y);
 
         // Set IsMoving parameter based on raw input magnitude instead of moveDirection
         bool isMoving = moveInput.magnitude > minimumMoveThreshold;
@@ -243,8 +243,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         animator = newAnimator;
     }
 
-    public void SetFollowTarget(Transform newFollowTarget)
-    {
+    public void SetFollowTarget(Transform newFollowTarget){
         followTarget = newFollowTarget;
         SetFollowTarget();
     }
@@ -266,7 +265,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 
     private void OnApplicationFocus(bool hasFocus)
     {
-        if (IsOwner) return;
+        if (!IsOwner) return;
         if (hasFocus) Cursor.lockState = CursorLockMode.Locked;
         else Cursor.lockState = CursorLockMode.None;
     }

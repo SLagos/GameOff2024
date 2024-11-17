@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.Netcode;
 
-public class FieldOfView : MonoBehaviour
+public class FieldOfView : NetworkBehaviour
 {
     public float viewRadius;
     [Range(0, 360)]
@@ -19,13 +20,16 @@ public class FieldOfView : MonoBehaviour
     public int edgeResolveIterations;
     public float edgeDstThreshold;
 
-    public List<Transform> visibleTargets = new List<Transform>();
+    public bool ShowFieldOfView;
+
+    public List<TargetInfo> visibleTargets = new List<TargetInfo>();
 
     public MeshFilter viewMeshFilter;
     Mesh viewMesh;
 
     void Start()
     {
+        if (!IsOwner) return;
         viewMesh = new Mesh();
         viewMesh.name = "View Mesh";
         viewMeshFilter.mesh = viewMesh;
@@ -43,7 +47,10 @@ public class FieldOfView : MonoBehaviour
 
     void FixedUpdate()
     {
-        DrawFieldOfView();
+        if (!IsOwner) return;
+        if (ShowFieldOfView)
+            DrawFieldOfView();
+        viewMeshFilter.gameObject.SetActive(ShowFieldOfView);
     }
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
@@ -69,7 +76,7 @@ public class FieldOfView : MonoBehaviour
                 float dstToTarget = Vector3.Distance(transform.position, target.position);
                 if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
                 {
-                    visibleTargets.Add(target);
+                    visibleTargets.Add(new TargetInfo(target, dstToTarget));
                 }
             }
 
@@ -89,9 +96,9 @@ public class FieldOfView : MonoBehaviour
 
             if (i > 0)
             {
-                bool edgeDstThresholdExceeded = Mathf.Abs(oldViewCast.dst - newViewCast.dst)> edgeDstThreshold;
+                bool edgeDstThresholdExceeded = Mathf.Abs(oldViewCast.dst - newViewCast.dst) > edgeDstThreshold;
                 if (oldViewCast.hit == newViewCast.hit || (oldViewCast.hit && newViewCast.hit && edgeDstThresholdExceeded))
-                { 
+                {
                     EdgeInfo edge = FindEdge(oldViewCast, newViewCast);
                     if (edge.pointA != Vector3.zero)
                     {
@@ -157,7 +164,7 @@ public class FieldOfView : MonoBehaviour
             float angle = (minAngle + maxAngle) / 2;
             ViewCastInfo newViewCast = ViewCast(angle);
 
-            bool edgeDstThresholdExceeded = Mathf.Abs(minViewCast.dst - newViewCast.dst)> edgeDstThreshold;
+            bool edgeDstThresholdExceeded = Mathf.Abs(minViewCast.dst - newViewCast.dst) > edgeDstThreshold;
             if (newViewCast.hit == minViewCast.hit && !edgeDstThresholdExceeded)
             {
                 minAngle = angle;
@@ -200,3 +207,14 @@ public class FieldOfView : MonoBehaviour
         }
     }
 }
+public struct TargetInfo
+    {
+        public Transform transform;
+        public float distance;
+
+        public TargetInfo(Transform _target, float _distance)
+        {
+            transform = _target;
+            distance = _distance;
+        }
+    }

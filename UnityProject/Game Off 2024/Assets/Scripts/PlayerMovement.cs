@@ -269,4 +269,9 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
         if (hasFocus) Cursor.lockState = CursorLockMode.Locked;
         else Cursor.lockState = CursorLockMode.None;
     }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        
+    }
 }

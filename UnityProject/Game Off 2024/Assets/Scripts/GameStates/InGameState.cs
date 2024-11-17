@@ -10,6 +10,7 @@ public class InGameState : AppState
     public override EAppStateId Id { get => EAppStateId.InGame; }
     public override void OnEnter()
     {
+        UIManager.Instance.GoToGameView();
         NetworkEventDispatcher.OnCLientStoppedEvent += OnClientStopped;
     }
 

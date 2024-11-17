@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3146329927406865164}
   - component: {fileID: 454005724900900945}
   - component: {fileID: 6770264648662901578}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4853,7 +4853,9 @@ GameObject:
   - component: {fileID: 6279827214850859330}
   - component: {fileID: 5091629085635328897}
   - component: {fileID: 2736417204318674750}
-  m_Layer: 7
+  - component: {fileID: 7517585739999803463}
+  - component: {fileID: 6740591562109938383}
+  m_Layer: 8
   m_Name: torch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4931,6 +4933,39 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7517585739999803463
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1582308058160468922}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.31172922, y: 1.3408954, z: 0.07038225}
+  m_Center: {x: 0, y: 0.70474684, z: 0.022783127}
+--- !u!114 &6740591562109938383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1582308058160468922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b53bbf967ed4b4b4a8c094403f31d758, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9091012817391196417
 GameObject:
   m_ObjectHideFlags: 0
@@ -4942,7 +4977,7 @@ GameObject:
   - component: {fileID: 8421889966728653195}
   - component: {fileID: 887107783367478093}
   - component: {fileID: 4722261545709222800}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

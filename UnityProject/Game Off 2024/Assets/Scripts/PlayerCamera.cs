@@ -81,4 +81,8 @@ public class PlayerCamera : NetworkBehaviour, PlayerControls.IPlayerActions
             Cursor.visible = false;
         }
     }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+    }
 } 

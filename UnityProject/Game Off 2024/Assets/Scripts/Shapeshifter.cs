@@ -197,5 +197,9 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
     {
         if(!IsOwner) return;
         playerMovement.SetFollowTarget(transform);
-    }  
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+    }
 }

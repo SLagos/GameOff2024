@@ -15,11 +15,11 @@ MonoBehaviour:
   mimics:
   - id: Chest
     visualPrefab: {fileID: 2377840826715166119, guid: 7d0f7c7c3b2efe3458de1517715a708a, type: 3}
-    speed: 8
+    speed: 2.6
     camerHeight: 0.85
     cameraDistance: 2
   - id: Chair
     visualPrefab: {fileID: 2377840826715166119, guid: 68b12485f2c60a64db7da06d40c0a4c9, type: 3}
-    speed: 5
+    speed: 2.2
     camerHeight: 0.75
     cameraDistance: 1.8

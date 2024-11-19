@@ -120,7 +120,7 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         currentShapeIndex = shapeIndex;
         currentShape = GetMimicDataFromEnum(availableShapes[currentShapeIndex]);
         if (currentShape == null) return;
-        
+
 
         // Destroy previous shape instance and remove old collider
         if (currentShapeInstance != null)
@@ -132,9 +132,9 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         }
 
         // Instantiate new shape
-        var networkObject =  Instantiate(currentShape.visualPrefab, visualParent).GetComponent<NetworkObject>();
+        var networkObject = Instantiate(currentShape.visualPrefab, visualParent).GetComponent<NetworkObject>();
         //NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(currentShape.visualPrefab.GetComponent<NetworkObject>(), OwnerClientId, isPlayerObject: true, forceOverride: true);
-        
+
         currentShapeInstance = networkObject.gameObject;
         currentShapeInstance.transform.localPosition = Vector3.zero;
         currentShapeInstance.transform.localRotation = Quaternion.identity;
@@ -169,7 +169,7 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
 
         networkObject.SpawnWithOwnership(OwnerClientId);
         networkObject.TrySetParent(visualParent);
-        
+
 
         // var componentBase = virtualCamera.GetCinemachineComponent(CinemachineCore.Stage.Body);
         // if (componentBase is Cinemachine3rdPersonFollow)
@@ -188,15 +188,14 @@ public class Shapeshifter : NetworkBehaviour, PlayerControls.IPlayerMimicActions
         // clientNetworkAnimator.Animator = animator;
 
         // Update movement speed using the property
-        playerMovement.MoveSpeed = currentShape.speed;
-        SetupNewFollowTargetClientRpc();
+        SetupNewStatsClientRpc();
     }
 
     [ClientRpc]
-    private void SetupNewFollowTargetClientRpc()
+    private void SetupNewStatsClientRpc()
     {
-        if(!IsOwner) return;
-        playerMovement.SetFollowTarget(transform);
+        if (!IsOwner) return;
+       playerMovement.MoveSpeed = currentShape.speed;
     }
 
     public void OnInteract(InputAction.CallbackContext context)

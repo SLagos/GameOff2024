@@ -49,6 +49,7 @@ public class HunterController : MonoBehaviour, PlayerControls.IPlayerActions
         var targets = fov.visibleTargets;
         foreach (var target in targets)
         {
+            if(target.transform == null) continue; //We skip this transform since was destroyed
             var interactable = target.transform.GetComponent<IInteractable>();
             if (target.distance <= minDistanceToInteract && interactable != null)
             {

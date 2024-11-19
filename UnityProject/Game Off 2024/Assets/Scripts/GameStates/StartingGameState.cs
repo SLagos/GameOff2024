@@ -55,11 +55,11 @@ public class StartingGameState : AppState
         int prefabIndex = obj == NetworkManager.Singleton.LocalClientId ? 0 : 1;
         if (overridePrefab == null)
         {
-            NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(prefabs[prefabIndex], obj, isPlayerObject: true, forceOverride: true);
+            NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(prefabs[prefabIndex], obj, isPlayerObject: true, forceOverride: true, position:Vector3.zero + Vector3.up);
         }
         else
         {
-            NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(overridePrefab, obj, isPlayerObject: true, forceOverride: true);
+            NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(overridePrefab, obj, isPlayerObject: true, forceOverride: true, position: Vector3.zero + Vector3.up);
         }
     }
 

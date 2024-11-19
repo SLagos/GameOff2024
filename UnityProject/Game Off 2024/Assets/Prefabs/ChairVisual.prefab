@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3149169590218985245}
-  - component: {fileID: 3731597420462547872}
   - component: {fileID: -232612203443768236}
   - component: {fileID: 1795209460863513237}
   - component: {fileID: 3038266992689196543}
+  - component: {fileID: 7557727053062938194}
   m_Layer: 8
   m_Name: ChairVisual
   m_TagString: Untagged
@@ -37,27 +37,6 @@ Transform:
   - {fileID: 7819031536189181426}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3731597420462547872
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2377840826715166119}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.44658828, y: 0.41417116, z: 0.31475425}
-  m_Center: {x: 0, y: 0.18594638, z: 0}
 --- !u!114 &-232612203443768236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,6 +89,29 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _followTarget: {fileID: 7819031536189181426}
   _animator: {fileID: 0}
+--- !u!136 &7557727053062938194
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2377840826715166119}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.26
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.48, z: 0}
 --- !u!1 &5129133464758629021
 GameObject:
   m_ObjectHideFlags: 0

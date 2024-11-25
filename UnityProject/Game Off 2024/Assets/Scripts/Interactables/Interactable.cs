@@ -10,7 +10,7 @@ public class Interactable : MonoBehaviour, IInteractable
 
     public Vector3 Position => transform.position;
 
-    public void Interact()
+    public virtual void Interact()
     {
         Debug.Log("Interacting with " + gameObject.name);
     }

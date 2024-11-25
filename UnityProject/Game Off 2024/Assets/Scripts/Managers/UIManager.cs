@@ -2,14 +2,19 @@ using System;
 using TMPro;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoSingleton<UIManager>
 {
     [SerializeField]
-    private GameObject _mainMenuScreen, _lobbiesScreen, _lobbyScreen, _gameScreen;
+    private GameObject _mainMenuScreen, _lobbiesScreen, _lobbyScreen, _gameScreen, _interactionDisplay;
+
+
 
     [SerializeField]
-    private TMP_Text _interactText;
+    private TMP_Text _interactText, _interactTime;
+    [SerializeField]
+    private Image _interactImage;
 
     [SerializeField]
     private float heighOffset = 0.1f;
@@ -72,6 +77,18 @@ public class UIManager : MonoSingleton<UIManager>
     public void HideInteractText()
     {
         _interactText.gameObject.SetActive(false);
+    }
+
+    public void SetInteractionTime(float time, float normValue)
+    {
+        _interactTime.text = time.ToString("0"); 
+        _interactImage.fillAmount = normValue;
+    }
+
+    public void SetInterctionDisplay(bool active, Vector3 worldPosition)
+    {
+        _interactionDisplay.transform.position = WorldPositionToScreen(worldPosition);
+        _interactionDisplay.SetActive(active);
     }
 
 }

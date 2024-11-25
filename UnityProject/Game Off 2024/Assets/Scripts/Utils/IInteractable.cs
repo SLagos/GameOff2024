@@ -1,5 +1,10 @@
-﻿public interface IInteractable
+﻿
+using UnityEngine;
+
+public interface IInteractable
 {
+    public float InteractionTime { get; }
+    public Vector3 Position { get; }
     public EInteractableType InteractableType { get; }
     public void Interact();
 }

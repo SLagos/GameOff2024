@@ -50,6 +50,10 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 
     private Collider activeCollider;
 
+    private bool canMove = true;
+
+    public bool CanMove { get { return canMove; } set { canMove = value; } }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -114,6 +118,7 @@ public class PlayerMovement : NetworkBehaviour, PlayerControls.IPlayerActions
 
     private void HandleMovement()
     {
+        if (!canMove) return;
         Vector3 cameraForward = playerCamera.transform.forward;
         Vector3 cameraRight = playerCamera.transform.right;
 

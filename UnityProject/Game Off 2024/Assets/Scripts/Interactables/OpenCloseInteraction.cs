@@ -9,6 +9,11 @@ public class OpenCloseInteraction : Interactable
     {
         base.Interact();
         isOpen = !isOpen;
-        openObject.SetActive(isOpen);
+        openObject.SetActive(!isOpen);
+    }
+
+    private void Start()
+    {
+        openObject.SetActive(!isOpen);
     }
 }

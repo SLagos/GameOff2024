@@ -108,6 +108,7 @@ public class HunterController : NetworkBehaviour, PlayerControls.IPlayerActions
         {
             if (target.transform == null) continue; //We skip this transform since was destroyed
             var interactable = target.transform.GetComponent<IInteractable>();
+            if(interactable == null) interactable = target.transform.parent.GetComponent<IInteractable>(); //Maybe there is an interactable in the parent
             if (target.distance <= minDistanceToInteract && interactable != null)
             {
                 targetsInReach.Add(target);
@@ -119,6 +120,7 @@ public class HunterController : NetworkBehaviour, PlayerControls.IPlayerActions
         {
             var closestTarget = targetsInReach[0].transform;
             closestInteractable = closestTarget.GetComponent<IInteractable>();
+            if (closestInteractable == null) closestInteractable = closestTarget.parent.GetComponent<IInteractable>();
             UIManager.Instance.SetInteractText("Press E to interact", closestTarget.position);
         }
         else

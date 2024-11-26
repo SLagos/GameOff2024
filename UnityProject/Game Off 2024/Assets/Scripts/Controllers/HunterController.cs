@@ -45,7 +45,7 @@ public class HunterController : NetworkBehaviour, PlayerControls.IPlayerActions
         {
             closestInteractable.Interact();
         }
-    
+
         EndInteraction();
     }
 
@@ -53,7 +53,7 @@ public class HunterController : NetworkBehaviour, PlayerControls.IPlayerActions
     {
         movementController.CanMove = true;
         isInteracting = false;
-        UIManager.Instance.SetInterctionDisplay(false,Vector3.zero);
+        UIManager.Instance.SetInterctionDisplay(false, Vector3.zero);
     }
 
     private IEnumerator StartInteractionCoroutine(float time)
@@ -87,16 +87,10 @@ public class HunterController : NetworkBehaviour, PlayerControls.IPlayerActions
 
     private void Awake()
     {
-        controls = new PlayerControls();
-        controls.Player.SetCallbacks(this);
-        movementController = GetComponent<PlayerMovement>();
-    }
-
-    private void Start()
-    {
         fov = GetComponent<FieldOfView>();
         controls = new PlayerControls();
         controls.Player.SetCallbacks(this);
+        movementController = GetComponent<PlayerMovement>();
     }
 
     void Update()
@@ -108,7 +102,7 @@ public class HunterController : NetworkBehaviour, PlayerControls.IPlayerActions
         {
             if (target.transform == null) continue; //We skip this transform since was destroyed
             var interactable = target.transform.GetComponent<IInteractable>();
-            if(interactable == null) interactable = target.transform.parent.GetComponent<IInteractable>(); //Maybe there is an interactable in the parent
+            if (interactable == null) interactable = target.transform.parent.GetComponent<IInteractable>(); //Maybe there is an interactable in the parent
             if (target.distance <= minDistanceToInteract && interactable != null)
             {
                 targetsInReach.Add(target);
